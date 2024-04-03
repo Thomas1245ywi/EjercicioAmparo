@@ -9,8 +9,8 @@ class AprendizController:
 
 
 
-    def set_aprendiz(self, nombre, edad, id_ficha,id_resultado):
-        self.aprendiz_model.set_aprendiz(nombre, edad, id_ficha,id_resultado)
+    def set_aprendiz(self, nombre, edad, id_ficha,id_resultado,estado="Por Evaluar"):
+        self.aprendiz_model.set_aprendiz(nombre, edad, id_ficha,id_resultado,estado)
 
     def get_aprendicez(self):
         return self.aprendiz_model.get_aprendicez()

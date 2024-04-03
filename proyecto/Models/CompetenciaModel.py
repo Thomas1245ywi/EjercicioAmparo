@@ -12,6 +12,8 @@ class CompetenciaModel:
             CREATE TABLE IF NOT EXISTS Competencia (
                 id INTEGER PRIMARY KEY,
                 nombre TEXT, 
+                id_programa INTEGER,
+                FOREIGN KEY(id_programa) REFERENCES Programa(id)
                                              
             );
                     
@@ -26,7 +28,7 @@ class CompetenciaModel:
         self.cursor.execute(sentencia, (nombre))
 
     def get_competencias(self):
-        self.cursor.execute('SELECT FROM *  Competencia  ')
+        self.cursor.execute('SELECT * FROM  Competencia  ')
         return self.cursor.fetchall()
 
 

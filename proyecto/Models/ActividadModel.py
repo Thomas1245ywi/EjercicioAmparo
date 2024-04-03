@@ -2,7 +2,7 @@ import sqlite3 as sql
 
 
 class ActividadModel:
-    def _init_(self):
+    def __init__(self):
         self.conn = sql.connect("bd_sena.db")
         self.cursor = self.conn.cursor()
 
@@ -20,21 +20,23 @@ class ActividadModel:
 
         self.conn.commit()
 
-    def set_actividad(self, nombre, nota, id_resultado):
-        # Calcular el estado del estudiante
-        estado = 'Aprobado' if nota and nota >= 70 else 'Por Evaluar'
+    def set_actividad(self, nombre, id_resultado,estado):
+  
+        sentencia2 = 'SELECT id FROM Estado WHERE nombre = ?' 
+        estado_id = self.cursor.execute(sentencia2,(estado,)).fetchone()
+        sentencia = f'INSERT INTO Actividad(nombre, id_resultado,id_estado) VALUES (?,?,?)'
 
-        # Insertar el estado en la tabla Estado
-        self.cursor.execute("INSERT INTO Estado(nombre) VALUES (?)", (estado,))
+        self.cursor.execute(sentencia, (nombre, id_resultado, estado_id))
         self.conn.commit()
 
-        # Obtener el ID del estado insertado
-        id_estado = self.cursor.lastrowid
-
-        # Insertar la actividad en la tabla Actividad
-        sentencia = 'INSERT INTO Actividad(nombre, nota, id_resultado, id_estado) VALUES (?,?,?,?)'
-        self.cursor.execute(sentencia, (nombre, nota, id_resultado, id_estado))
+    def calificar_actividad(self, id_actividad, nota):
+        sentencia = 'UPDATE Actividad SET nota = ? WHERE id = ?'
+        self.cursor.execute(sentencia, (nota, id_actividad))
         self.conn.commit()
+
+
+
+
 
     def get_actividades(self):
         self.cursor.execute('SELECT * FROM Actividad')

@@ -8,11 +8,14 @@ class ActividadController:
         return self.actividad_model.obtener_nota_actividad(id_actividad)
 
 
-    def set_actividad(self, nombre, nota, id_resultado):
-        self.actividad_model.set_actividad(nombre, nota, id_resultado)
+    def set_actividad(self, nombre, id_resultado):
+        self.actividad_model.set_actividad(nombre, id_resultado)
+
+    def calificar_actividad(self, id_actividad, nota):
+        self.actividad_model.calificar_actividad(id_actividad, nota)
 
     def get_actividades(self):
-        self.actividad_model.get_actividades()
+        return self.actividad_model.get_actividades()
 
     def cerrar_conexion(self):
         self.actividad_model.cerrar_conexion()

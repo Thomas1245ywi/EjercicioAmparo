@@ -11,7 +11,10 @@ class ResultadoModel:
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS Resultado (
                 id INTEGER PRIMARY KEY,
-                nombre TEXT                              
+                nombre TEXT,
+                id_competencia INTEGER,
+                FOREIGN KEY(id_competencia) REFERENCES Competencia(id)
+                                                      
             );
                     
         """)
@@ -20,9 +23,9 @@ class ResultadoModel:
 
         self.conn.commit()
 
-    def set_resultado(self, nombre):
-        sentencia = 'INSERT INTO Resultado(nombre) VALUES (?)'
-        self.cursor.execute(sentencia, (nombre,))
+    def set_resultado(self, nombre,id_competencia):
+        sentencia = 'INSERT INTO Resultado(nombre,id_competencia) VALUES (?,?)'
+        self.cursor.execute(sentencia, (nombre,id_competencia))
         self.conn.commit()
 
     def get_resultados(self):
