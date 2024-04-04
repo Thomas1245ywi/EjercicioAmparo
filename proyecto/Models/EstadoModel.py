@@ -19,7 +19,7 @@ class EstadoModel:
         self.conn.commit()
 
     def set_estado(self,nombre):
-        sentencia = "INSERT INTO Ficha(nombre) VALUES (?,?)"
+        sentencia = "INSERT INTO Estado(nombre) VALUES (?,?)"
         self.cursor.execute(sentencia, (nombre))
 
     def get_estados(self):
@@ -28,7 +28,9 @@ class EstadoModel:
 
         # Recuperar los resultados después de ejecutar la consulta
         return self.cursor.fetchall()
+    
 
+ 
          
 
     def cerrar_conexion(self):

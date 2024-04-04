@@ -1,5 +1,5 @@
 import sqlite3 as sql
-
+from Models.EstadoModel import EstadoModel 
 
 class ActividadModel:
     def __init__(self):
@@ -20,23 +20,25 @@ class ActividadModel:
 
         self.conn.commit()
 
-    def set_actividad(self, nombre, id_resultado,estado):
-  
-        sentencia2 = 'SELECT id FROM Estado WHERE nombre = ?' 
-        estado_id = self.cursor.execute(sentencia2,(estado,)).fetchone()
-        sentencia = f'INSERT INTO Actividad(nombre, id_resultado,id_estado) VALUES (?,?,?)'
+    def set_actividad(self, nombre, id_resultado, estado):
+        # Buscar el ID del estado por su nombre
+        estado_id = EstadoModel.obtener_estado_nombre(estado)
+        print(estado_id)
 
-        self.cursor.execute(sentencia, (nombre, id_resultado, estado_id))
-        self.conn.commit()
+        if estado_id:
+            # Insertar la actividad en la base de datos
+            sentencia_actividad = 'INSERT INTO Actividad(nombre, id_resultado, id_estado) VALUES (?, ?, ?)'
+            datos_actividad = (nombre, id_resultado, estado_id[0])  # estado_id es una tupla, tomamos el primer elemento
+            self.cursor.execute(sentencia_actividad, datos_actividad)
+            self.conn.commit()
+            print("Actividad agregada exitosamente.")
+        else:
+            print(f"No se encontró un estado con el nombre '{estado}'. No se pudo agregar la actividad.")
 
     def calificar_actividad(self, id_actividad, nota):
         sentencia = 'UPDATE Actividad SET nota = ? WHERE id = ?'
         self.cursor.execute(sentencia, (nota, id_actividad))
         self.conn.commit()
-
-
-
-
 
     def get_actividades(self):
         self.cursor.execute('SELECT * FROM Actividad')

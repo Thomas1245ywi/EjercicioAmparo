@@ -8,8 +8,8 @@ class ActividadController:
         return self.actividad_model.obtener_nota_actividad(id_actividad)
 
 
-    def set_actividad(self, nombre, id_resultado):
-        self.actividad_model.set_actividad(nombre, id_resultado)
+    def set_actividad(self, nombre, id_resultado,estado = "Por Evaluar"):
+        self.actividad_model.set_actividad(nombre, id_resultado,estado)
 
     def calificar_actividad(self, id_actividad, nota):
         self.actividad_model.calificar_actividad(id_actividad, nota)

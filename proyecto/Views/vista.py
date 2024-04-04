@@ -54,6 +54,8 @@ def consultar_actividades():
                       
 
 def calificar_actividad():
+    ocultar_todo()
+    lblActividad.grid()
     cmbActividades.grid()
     lblNota.grid()
     entNota.grid()
@@ -162,6 +164,7 @@ lblMensaje = tk.Label(text='')
 lblResultado = tk.Label(text='Resultado: ')
 lblCompetencia = tk.Label(text='Competencia: ')
 lblNota = tk.Label(text="Nota")
+lblActividad = tk.Label(text="Actividad: ")
 
 
 opcion_seleccionada = tk.StringVar()
@@ -228,86 +231,6 @@ funcionesActividades.add_command(label="Agregar Actividad", command=agregar_acti
 funcionesActividades.add_command(label="Calificar Actividad", command=calificar_actividad)
 
 funcionesActividades.add_command(label="Consultar Actividades", command=consultar_actividades)
-
-
-
-
-
-
-
-# def listar_contactos():
-    
-#     frame_agregar_contacto.grid_forget()
-
-#     text_area.delete('1.0',tk.END)
-#     contactos = ct.listar_contactos()
-
-#     frame_contactos_botones.grid_forget()
-#     frame_contactos_botones.grid()
-
-#     # Mostrar botones para cada contacto en la lista
-#     for contacto in contactos:
-#         text_area.insert(tk.END, contacto)
-#         text_area.insert("Acciones", frame_contactos_botones)
-
-
-#         btn_borrar = tk.Button(frame_contactos_botones, text='Borrar' )
-#         btn_borrar.grid(side="right")
-#         btn_editar = tk.Button(frame_contactos_botones, text='Editar')
-#         btn_editar.grid(side="left")
-
-      
-#     text_area.grid()
-
-#     frame_contactos.grid()
-
-
-
-
-
-# def agregar_contacto(nombre, numero):
-#     contacto = ct.Contacto(nombre, numero)
-#     lbl_exitoso.config(text=contacto.agregar_contacto())
-#     listar_contactos()
-
-
-
-
-
-
-
-
-
-
-# def ver_agregar_contacto():
-    
-#     frame_contactos.grid_forget()
-    
-    
-
-#     lbl_nombre.grid()
-#     ent_nombre.grid()
-#     lbl_numero.grid()
-#     ent_numero.grid()
-#     btn_agregar.grid()
-#     frame_agregar_contacto.grid()
-
-    
-
-
-    
-
-# menu = tk.Menu(root)
-# root.config(menu=menu)
-
-
-
-# opciones = tk.Menu(menu)
-# menu.add_cascade(label="Opciones", menu=opciones)
-
-# opciones.add_command(label="Listar Contacto",command = listar_contactos)
-# opciones.add_command(label="Agregar Contacto",command = ver_agregar_contacto)
-# opciones.add_command(label="Modificar Contacto",command = '')
 
 
 
