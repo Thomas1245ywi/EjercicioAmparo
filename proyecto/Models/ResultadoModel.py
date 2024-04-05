@@ -13,6 +13,7 @@ class ResultadoModel:
                 id INTEGER PRIMARY KEY,
                 nombre TEXT,
                 id_competencia INTEGER,
+                
                 FOREIGN KEY(id_competencia) REFERENCES Competencia(id)
                                                       
             );
@@ -30,6 +31,10 @@ class ResultadoModel:
 
     def get_resultados(self):
         self.cursor.execute('SELECT  * FROM Resultado')
+        return self.cursor.fetchall()
+    
+    def get_resultados_for_table(self):
+        self.cursor.execute('SELECT  Resultado.nombre, Competencia.nombre FROM Resultado INNER JOIN Competencia ON id_competencia = Competencia.id')
         return self.cursor.fetchall()
 
 

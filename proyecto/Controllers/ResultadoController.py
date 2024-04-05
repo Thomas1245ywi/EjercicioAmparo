@@ -11,6 +11,9 @@ class ResultadoController:
 
     def get_resultados(self):
         return self.resultado_model.get_resultados()
+    
+    def get_resultados_for_table(self):
+        return self.resultado_model.get_resultados_for_table()
 
     def cerrar_conexion(self):
         self.resultado_model.cerrar_conexion()
