@@ -13,8 +13,11 @@ class ResultadoModel:
                 id INTEGER PRIMARY KEY,
                 nombre TEXT,
                 id_competencia INTEGER,
+                id_estado INTEGER,
                 
-                FOREIGN KEY(id_competencia) REFERENCES Competencia(id)
+                FOREIGN KEY(id_competencia) REFERENCES Competencia(id),
+                FOREIGN KEY(id_estado) REFERENCES EstadoResultado(id)
+
                                                       
             );
                     
@@ -24,10 +27,23 @@ class ResultadoModel:
 
         self.conn.commit()
 
-    def set_resultado(self, nombre,id_competencia):
-        sentencia = 'INSERT INTO Resultado(nombre,id_competencia) VALUES (?,?)'
-        self.cursor.execute(sentencia, (nombre,id_competencia))
+    def set_resultado(self, nombre,id_competencia,estado_name):
+
+        sentencia_estado = 'SELECT id FROM EstadoResultado WHERE nombre = ?'
+        estado = self.conn.execute(sentencia_estado,(estado_name,)).fetchone()
+        estado_id = estado[0]
+
+
+
+
+
+        sentencia = 'INSERT INTO Resultado(nombre,id_competencia,id_estado) VALUES (?,?,?)'
+        self.cursor.execute(sentencia, (nombre,id_competencia,estado_id))
         self.conn.commit()
+
+
+
+
 
     def get_resultados(self):
         self.cursor.execute('SELECT  * FROM Resultado')

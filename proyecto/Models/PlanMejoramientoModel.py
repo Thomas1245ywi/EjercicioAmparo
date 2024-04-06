@@ -12,6 +12,10 @@ class PlanMejoramientoModel:
             CREATE TABLE IF NOT EXISTS PlanMejoramiento(
                 id INTEGER PRIMARY KEY,
                 nombre VARCHAR(100),
+                fecha_asignacion DATE,
+                fecha_hora_entrega DATETIME,
+                descripcion Varchar(255),
+                evaluacion FLOAT,
                 id_resultado INTEGER,
                 FOREIGN KEY (id_resultado) REFERENCES Resultado(id)
             );

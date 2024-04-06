@@ -47,7 +47,7 @@ class ActividadModel:
             estado = 'Aprobado'
 
         else:
-            estado = 'Plan De Mejoramiento'
+            estado = 'Desaprobado'
         
 
         actividades_arreglo = []
@@ -64,7 +64,7 @@ class ActividadModel:
         cantidadActividades = len(actividades)
         if cantidadActividades == 3:
             for actividad in actividades:
-                if actividad[3] == "Plan De Mejoramiento":
+                if actividad[3] == "Desaprobado":
                     
                     actividades_arreglo.append(actividad)
 

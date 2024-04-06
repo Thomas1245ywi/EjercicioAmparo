@@ -6,8 +6,8 @@ class ResultadoController:
 
 
 
-    def set_resultado(self, nombre,id_competencia):
-        self.resultado_model.set_resultado(nombre,id_competencia)
+    def set_resultado(self, nombre,id_competencia,estado_name = "Por Evaluar"):
+        self.resultado_model.set_resultado(nombre,id_competencia,estado_name)
 
     def get_resultados(self):
         return self.resultado_model.get_resultados()
