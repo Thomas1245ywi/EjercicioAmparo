@@ -19,8 +19,7 @@ class ActividadPlanMejoramientoModel:
             );
 
 
-                                    
-            );
+          
                     
         """)
 
@@ -37,6 +36,18 @@ class ActividadPlanMejoramientoModel:
         sentencia = 'SELECT id_actividad FROM ActividadPlanMejoramiento WHERE id_plan = ?'
         self.cursor.execute(sentencia, (id_plan,))
         return self.cursor.fetchall()
+    
+
+    def obtener_actividades_plan_mejoramiento_for_table(self, id_plan):
+        sentencia = 'SELECT id_actividad, Actividad.nombre INNER JOIN Actividad ON id_actividad = Actividad(id) FROM ActividadPlanMejoramiento WHERE id_plan = ?'
+        self.cursor.execute(sentencia, (id_plan,))
+        return self.cursor.fetchall()
+    
+
+    def get_planes(self):
+        return self.cursor.execute('SELECT Actividad.nombre, PlanMejoramiento.nombre FROM Actividad INNER JOIN ActividadPlanMejoramiento ON Actividad.id = ActividadPlanMejoramiento.id_actividad INNER JOIN PlanMejoramiento ON ActividadPlanMejoramiento.id_plan = PlanMejoramiento.id'
+
+)
     
     def cerrar_conexion(self):
         self.conn.close()

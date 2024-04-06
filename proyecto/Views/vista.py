@@ -12,6 +12,8 @@ from Controllers.ResultadoActividadController import ResultadoActividadControlle
 
 from Controllers.EstadoController import EstadoController
 from Controllers.PlanMejoramientoController import PlanMejoramientoController
+from proyecto.Controllers.ActividadPlanMejoramientoController import ActividadPlanMejoramientoController
+
 
 
 
@@ -31,9 +33,18 @@ actividad_controller = ActividadController()
 estado_controller = EstadoAprendizController() 
 resultado_actividad_controller = ResultadoActividadController()
 plan_mejoramiento_controller = PlanMejoramientoController()
-
+actividad_plan_mejoramiento_controller = ActividadPlanMejoramientoController()
 actividades_arreglo = []
 
+
+def consultar_plan():
+    pass
+
+def cargar_actividades(event):
+    actividades_filtradas = actividad_plan_mejoramiento_controller.obtener_actividades_plan_mejoramiento_for_table(diccionarioResultados[opcion_seleccionada_resultado.get()])
+    print(actividades_filtradas)
+    diccionarioActividadesFiltradas = {actividad_filtradas[1]: actividad_filtradas[0] for actividad_filtradas in  actividades_filtradas}
+    cmbActividadesFiltradas.config(values= [actividad_filtradas[1] for actividad_filtradas in actividades_filtradas])
 
 
 def modificar_cmb_Resultados():
@@ -61,6 +72,17 @@ def modificar_cmb_Fichas():
     cmbFicha.config(values= [ficha[1] for ficha in fichas])
     global diccionarioFichas 
     diccionarioFichas = {ficha[1]: ficha[0] for ficha in  fichas}
+
+
+def modificar_cmb_Planes():
+    global planes_mejoramiento 
+    
+    planes_mejoramiento = plan_mejoramiento_controller.get_planes()
+
+    CmbPlanMejoramiento.config(values= [plan_mejoramiento[1] for plan_mejoramiento in planes_mejoramiento])
+    diccionarioPlanesMejoramiento = {plan_mejoramiento[1]: plan_mejoramiento[0] for plan_mejoramiento in  planes_mejoramiento}
+
+
 
 
 def modificar_cmb_estdiantes():
@@ -139,6 +161,28 @@ def agregar_plan_bd():
     print(primer_resultado)
 
     plan_mejoramiento_controller.set_plan(plan.get(),int(primer_resultado))
+    planes_mejoramiento = plan_mejoramiento_controller.get_planes()
+    diccionarioPlanes = {plan_mejoramiento[1]: plan_mejoramiento[0] for plan_mejoramiento in  planes_mejoramiento}
+
+
+    for actividad in actividades:
+
+        actividad_plan_mejoramiento_controller.asignar_actividad_plan_mejoramiento(diccionarioPlanes[plan.get()],actividad[0])
+    
+def consultar_planes():
+
+    ocultar_todo()
+    modificar_cmb_Planes()
+
+    CmbPlanMejoramiento.grid()
+    cmbActividadesFiltradas.grid()
+    btnConsultarPlan.grid()
+
+    
+
+    # Crear una tabla con encabezados
+    
+
 
 
 def calificar_actividad():
@@ -207,6 +251,7 @@ def consultar_resultado_aprendizaje():
     ocultar_todo()
     lblResultado.grid()
     cmbResultado.grid()
+    cmbActividadesFiltradas.grid()
     btnConsultarResultado.grid()
 
 def consultar_resultados():
@@ -297,6 +342,7 @@ lblPlanMejoramiento = tk.Label(text="El alumno a perdido una de las actividades 
 
 
 opcion_seleccionada = tk.StringVar()
+opcion_seleccionada_plan = tk.StringVar()
 nombre = tk.StringVar()
 edad = tk.StringVar()
 resultado = tk.StringVar()
@@ -307,6 +353,8 @@ plan = tk.StringVar()
 opcion_seleccionada_resultado = tk.StringVar()
 opcion_seleccionada_competencia =  tk.StringVar()
 opcion_seleccionada_actividad =  tk.StringVar()
+opcion_seleccionada_actividad_filtrada = tk.StringVar()
+opcion_seleccionada_resultado_filtrados = tk.StringVar()
 
 
 entNombre = tk.Entry(root, textvariable=nombre)
@@ -324,6 +372,22 @@ resultados = resultado_controller.get_resultados()
 
 cmbResultado = ttk.Combobox(root, values= [resultado[1] for resultado in resultados], textvariable=opcion_seleccionada_resultado)
 diccionarioResultados = {resultado[1]: resultado[0] for resultado in  resultados}
+
+cmbResultadoFiltrados = ttk.Combobox(root, values= [resultado[1] for resultado in resultados], textvariable=opcion_seleccionada_resultado_filtrados)
+diccionarioResultados = {resultado[1]: resultado[0] for resultado in  resultados}
+
+
+planes_mejoramiento = plan_mejoramiento_controller.get_planes()
+
+
+
+CmbPlanMejoramiento = ttk.Combobox(root, values= [plan_mejoramiento[1] for plan_mejoramiento in planes_mejoramiento], textvariable=opcion_seleccionada_plan)
+diccionarioPlanesMejoramiento = {plan_mejoramiento[1]: plan_mejoramiento[0] for plan_mejoramiento in  planes_mejoramiento}
+
+CmbPlanMejoramiento.bind("<<ComboboxSelected>>", cargar_actividades)
+
+
+cmbActividadesFiltradas =  ttk.Combobox(root,  textvariable=opcion_seleccionada_actividad_filtrada,)
 
 
 competencias = competencia_controller.get_competencias()
@@ -343,6 +407,7 @@ btnCalificar = tk.Button(text="Calificar", command=calificar_actividad_bd)
 btnRegistrar = tk.Button(text="Registrar", command=registrar_resultado_bd)
 btnConsultarResultado = tk.Button(text="Consultar", command=consultar_resultado_Actividades_bd)
 btnAgregarPlanMejoramiento = tk.Button(text="Agregar", command=agregar_plan_bd)
+btnConsultarPlan = tk.Button(text="Consultar", command=consultar_plan)
 
 
 funcionesAprendiz = tk.Menu(menu)
@@ -367,6 +432,12 @@ funcionesActividades.add_command(label="Agregar Actividad", command=agregar_acti
 funcionesActividades.add_command(label="Calificar Actividad", command=calificar_actividad)
 
 funcionesActividades.add_command(label="Consultar Actividades", command=consultar_actividades)
+
+
+funcionesPlanMejoramiento = tk.Menu(menu)
+menu.add_cascade(label="Planes de Mejoramiento", menu=funcionesPlanMejoramiento)
+funcionesPlanMejoramiento.add_command(label="Consultar Planes de Mejoramiento", command=consultar_planes)
+
 
 
 
