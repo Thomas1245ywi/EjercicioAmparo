@@ -14,6 +14,9 @@ class EstadoResultadoController:
 
     def get_estados(self):
         return self.estado_model.get_estados()
+    
+    def get_estado_por_nombre(self,estado):
+        return self.estado_model.get_estado_por_nombre(estado)
 
     def cerrar_conexion(self):
         self.estado_model.cerrar_conexion()

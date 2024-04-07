@@ -12,6 +12,7 @@ class ActividadModel:
         self.cursor = self.conn.cursor()
         self.plan_mejoramiento_model = PlanMejoramientoModel()
         self.resultado_actividad_model = ResultadoActividadModel()
+        self.cantidad = 0
 
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS Actividad (
@@ -57,18 +58,39 @@ class ActividadModel:
         sentencia = 'UPDATE Actividad SET nota = ?,id_estado = ?  WHERE id = ?'
         self.cursor.execute(sentencia, (nota, estado, id_actividad))
         self.conn.commit()
+        actividadesCalificadas = []
 
 
         resultado = self.resultado_actividad_model.obtener_resultado_por_actividad(id_actividad)
         actividades = self.resultado_actividad_model.obtener_actividades_por_resultado(resultado[0])
-        cantidadActividades = len(actividades)
-        if cantidadActividades == 3:
-            for actividad in actividades:
-                if actividad[3] == "Desaprobado":
-                    
-                    actividades_arreglo.append(actividad)
 
-            return actividades_arreglo
+    
+
+        
+        cantidad_actividades = len(actividades)
+        if cantidad_actividades == 3:
+            actividades_con_nota = [actividad for actividad in actividades if actividad[2] is not None]
+            if len(actividades_con_nota) == 3:
+                # Todas las actividades tienen nota, procede con el proceso
+                for actividad in actividades_con_nota:
+                    actividadesCalificadas.append(True)
+                    self.cantidad += 1
+
+                for actividad in actividades:
+                    if actividad[3] == "Desaprobado":
+                            
+                        actividades_arreglo.append(actividad)
+
+                return actividades_arreglo
+            else:
+               
+                print("No todas las actividades tienen nota")
+
+             
+        
+
+            
+       
                 
             
         

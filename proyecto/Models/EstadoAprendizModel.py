@@ -30,8 +30,15 @@ class EstadoAprendizModel:
         return self.cursor.fetchall()
     
 
- 
-         
+    def get_estado_por_nombre(self,estado):
+        # Ejecutar la consulta SQL
+        self.cursor.execute("SELECT id FROM EstadoAprendiz WHERE nombre = ?",(estado,))
+
+        # Recuperar los resultados después de ejecutar la consulta
+        return self.cursor.fetchone()
+    
+
+    
 
     def cerrar_conexion(self):
         self.conn.close()

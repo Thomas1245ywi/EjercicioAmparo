@@ -14,6 +14,10 @@ class EstadoAprendizController:
 
     def get_estados(self):
         return self.estado_aprendiz_model.get_estados()
+    
+    def get_estado_por_nombre(self,estado):
+        # Ejecutar la consulta SQL
+        return self.estado_aprendiz_model.get_estado_por_nombre(estado)
 
     def cerrar_conexion(self):
         self.estado_aprendiz_model.cerrar_conexion()

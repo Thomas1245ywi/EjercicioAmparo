@@ -55,6 +55,37 @@ class AprendizModel:
     def get_aprendicez_for_table(self):
         self.cursor.execute('SELECT Aprendiz.id,Aprendiz.nombre,Aprendiz.edad, Ficha.numero, EstadoAprendiz.nombre, Resultado.nombre FROM  Aprendiz INNER JOIN Ficha ON id_ficha = Ficha.id INNER JOIN EstadoAprendiz ON id_estado = EstadoAprendiz.id  INNER JOIN Resultado ON id_resultado = Resultado.id ')
         return self.cursor.fetchall()
+    
+
+    def get_aprendiz_por_plan(self, id_plan):
+        self.cursor.execute("""
+            SELECT Aprendiz.id
+            FROM Aprendiz
+            INNER JOIN Resultado ON Aprendiz.id_resultado = Resultado.id
+            INNER JOIN PlanMejoramiento ON PlanMejoramiento.id_resultado = Resultado.id
+            WHERE PlanMejoramiento.id = ?
+        """, (id_plan,))
+        return self.cursor.fetchone()
+    
+
+    def get_aprendicez_por_plan(self):
+        self.cursor.execute("""
+            SELECT Aprendiz.nombre,
+            PlanMejoramiento.nombre   
+            FROM Aprendiz
+            INNER JOIN Resultado ON Aprendiz.id_resultado = Resultado.id
+            INNER JOIN PlanMejoramiento ON PlanMejoramiento.id_resultado = Resultado.id
+           
+        """)
+        return self.cursor.fetchall()
+         
+         
+    
+    def cambiar_estado(self, id_estado, id_aprendiz):
+        print(id_aprendiz)
+        self.cursor.execute("UPDATE Aprendiz SET id_estado = ? WHERE id = ?",(id_estado[0],id_aprendiz[0]))
+        self.conn.commit()
+
 
     def obtener_actividades_por_alumno(self, id_alumno):
         sentencia = 'SELECT id_resultado FROM Alumno WHERE id = ?'

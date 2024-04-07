@@ -52,6 +52,11 @@ class ResultadoModel:
     def get_resultados_for_table(self):
         self.cursor.execute('SELECT  Resultado.nombre, Competencia.nombre FROM Resultado INNER JOIN Competencia ON id_competencia = Competencia.id')
         return self.cursor.fetchall()
+    
+    def cambiar_estado(self,id_resultado, id_estado):
+       
+        self.cursor.execute("UPDATE Resultado SET id_estado = ? WHERE id = ?",(id_estado[0],id_resultado[0]))
+        self.conn.commit()
 
 
     def cerrar_conexion(self):

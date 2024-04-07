@@ -16,6 +16,7 @@ from Controllers.EstadoController import EstadoController
 from Controllers.PlanMejoramientoController import PlanMejoramientoController
 
 
+import datetime
 
 
 
@@ -31,17 +32,85 @@ resultado_controller = ResultadoController()
 competencia_controller = CompetenciaController()
 estado_controller = EstadoController() 
 actividad_controller = ActividadController() 
-estado_controller = EstadoAprendizController() 
+estado_aprendiz_controller = EstadoAprendizController() 
 resultado_actividad_controller = ResultadoActividadController()
 plan_mejoramiento_controller = PlanMejoramientoController()
 estado_resultado_controller = EstadoResultadoController()
 actividades_arreglo = []
+fecha_seleccionada = None
+resultado_final = None
+id_plan = None
+retroalimentacioncita =  None
+contador = None
 
 
-def consultar_plan():
-    pass
 
 
+
+def cambio_plan_mejoramiento(event):
+    global retroalimentacioncita
+    
+    if contador == 2:
+        ocultar_todo()
+        lblAviso.grid()
+
+def agregar_retroalimentacion_bd():
+    plan_mejoramiento_controller.agregar_retroalimentacion(retroalimentacion.get(),fecha_seleccionada,id_plan)
+    print("oki")
+
+def calificar_plan_bd():
+    modificar_cmb_Planes()
+    global id_plan
+    id_plan,id_resultado,contador = plan_mejoramiento_controller.calificar_plan(nota.get(),diccionarioPlanesMejoramiento[opcion_seleccionada_plan.get()])
+    if id_plan != None:
+        ocultar_todo()
+        global retroalimentacioncita
+        retroalimentacioncita = plan_mejoramiento_controller.get_plan_mejoramiento(id_plan)
+
+
+        if retroalimentacioncita[0] is None:
+
+            lblRetroalimentacion.grid()
+            entRetroalimetacion.grid()
+            lblFechaEntrega.grid()
+            datEntrega.grid()
+            btnRetroalimentacion.grid()
+            contador+=1
+
+        else:
+            estado = "Desaprobado"
+            estado_id = estado_resultado_controller.get_estado_por_nombre(estado)
+            resultado_controller.cambiar_estado(id_resultado,estado_id)
+            estado_aprendiz = "En Proceso De Desercion"
+            aprendiz_id = aprendiz_controller.get_aprendiz_por_plan(id_plan)
+            print(aprendiz_id,"holi")
+
+            estado_aprendiz_id = estado_aprendiz_controller.get_estado_por_nombre(estado_aprendiz)
+
+            aprendiz_controller.cambiar_estado(estado_aprendiz_id,aprendiz_id)
+            contador+=1
+            
+
+
+
+
+            
+
+            ocultar_todo()
+            lblAviso.grid()
+
+
+
+        
+
+
+
+
+
+def actualizar_fecha(event):
+    global fecha_seleccionada
+    fecha_seleccionada = datEntrega.get_date()
+    print(fecha_seleccionada)
 
 def modificar_cmb_Resultados():
     global resultados 
@@ -71,7 +140,7 @@ def modificar_cmb_Fichas():
 
 
 def modificar_cmb_Planes():
-    global planes_mejoramiento 
+    global planes_mejoramiento,diccionarioPlanesMejoramiento
     
     planes_mejoramiento = plan_mejoramiento_controller.get_planes()
 
@@ -110,10 +179,21 @@ def ocultar_todo():
         widget.grid_forget()
 
 def calificar_actividad_bd():
-    global actividades_arreglo
+    modificar_cmb_Actividades()
+    global actividades_arreglo, resultado_final
     actividades_arreglo = actividad_controller.calificar_actividad(diccionarioActividades[opcion_seleccionada_actividad.get()],nota.get())
-    if actividades_arreglo != []:
+
+    if actividades_arreglo != None:
         ocultar_todo()
+        resultado = []
+        
+        for actividad_arreglo in actividades_arreglo:
+
+            resultado.append(resultado_actividad_controller.obtener_resultado_por_actividad(actividad_arreglo[0]))
+            
+        resultado_semifinal = set(resultado)
+        resultado_final = resultado_semifinal.pop()
+
 
         lblPlanMejoramiento.grid(row=0, column=0, padx=10, pady=10)
         entPlan.grid(row=0, column=1, padx=10, pady=10)
@@ -121,8 +201,11 @@ def calificar_actividad_bd():
         datEntrega.grid(row=1, column=1, padx=10, pady=10)
         lblDescripcion.grid(row=2, column=0, padx=10, pady=10)
         entDescipcion.grid(row=2, column=1, padx=10, pady=10)
+        datEntrega.bind("<<DateEntrySelected>>", actualizar_fecha)
 
-        btnAgregarPlanMejoramiento.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+        btnAgregarPlanMejoramiento.grid(row=3, column=0, columnspan=2, padx=10, pady=10) 
+
+
 
 
 
@@ -151,35 +234,26 @@ def consultar_actividades():
     pass
                       
 def agregar_plan_bd():
-    resultados_pet = []
+    fecha_hoy = datetime.date.today()
+   
+
+    print(resultado_final)
+    plan_mejoramiento_controller.set_plan(plan.get(),fecha_hoy,fecha_seleccionada,descripcion.get(),resultado_final[0])
 
     
-    for actividad in actividades:
-        resultado_pet = resultado_actividad_controller.obtener_resultado_por_actividad(actividad[0])
-        resultados_pet.append(resultado)
-
-    resultadosConjunto = set(resultado_pet)
-    primer_resultado = resultadosConjunto.pop()
-
-    print(primer_resultado)
-
-    plan_mejoramiento_controller.set_plan(plan.get(),int(primer_resultado))
-    planes_mejoramiento = plan_mejoramiento_controller.get_planes()
-    diccionarioPlanes = {plan_mejoramiento[1]: plan_mejoramiento[0] for plan_mejoramiento in  planes_mejoramiento}
-
-
-
     
-def consultar_planes():
+    
+def calificar_plan():
 
     ocultar_todo()
     modificar_cmb_Planes()
 
     lblPlanMejoramiento.grid()
     CmbPlanMejoramiento.grid()
-    lblActividad.grid()
-    cmbActividadesFiltradas.grid()
-    btnConsultarPlan.grid()
+
+    lblNota.grid()
+    entNota.grid()
+    btnCalificarPlan.grid()
 
     
 
@@ -247,6 +321,27 @@ def consultar_estudiantes():
 
         resultado_label = tk.Label(root, text=resultado)
         resultado_label.grid(row=i, column=4)
+
+def consultar_alumnos_planes():
+    aprendicez_competencia = aprendiz_controller.get_aprendicez_por_plan()
+
+    encabezados = ['Aprendiz','Competencia']
+    for i, encabezado in enumerate(encabezados):
+        label = tk.Label(root, text=encabezado)
+        label.grid(row=0, column=i)
+
+    for i, aprendiz_competencia in enumerate(aprendicez_competencia, start=1):
+        aprendiz_com = aprendiz_competencia[0]
+        competencia_com = aprendiz_competencia[1]
+   
+
+        aprendiz_label = tk.Label(root, text=aprendiz_com)
+        aprendiz_label.grid(row=i, column=0)
+        competencia_label = tk.Label(root, text=competencia_com)
+        competencia_label.grid(row=i, column=1)
+
+  
+
 
 
 def consultar_resultado_aprendizaje():
@@ -344,6 +439,9 @@ lblActividad = tk.Label(text="Actividad: ")
 lblPlanMejoramiento = tk.Label(text="Plan de Mejoramiento: ")
 lblFechaEntrega = tk.Label(text="Fecha Entrega: ")
 lblDescripcion = tk.Label(text="Descripcion: ")
+lblRetroalimentacion = tk.Label(text="Retroalimentacion: ")
+lblAviso = tk.Label(text="El Aprendiz No aprobo ninguno de los planes de mejoramiento por ende sera  citado a comite  ")
+
 
 
 
@@ -356,6 +454,7 @@ resultado = tk.StringVar()
 nota = tk.StringVar()
 plan = tk.StringVar()
 descripcion = tk.StringVar()
+retroalimentacion = tk.StringVar()
 
 
 
@@ -372,6 +471,8 @@ entResultado = tk.Entry(root,textvariable=resultado,width=45,font=("Times New Ro
 entNota = tk.Entry(root, textvariable=nota)
 entPlan = tk.Entry(root, textvariable=plan)
 entDescipcion = tk.Entry(root, textvariable=descripcion)
+entRetroalimetacion =  tk.Entry(root, textvariable=retroalimentacion,width=68)
+
 
 datEntrega = DateEntry(root, width=12, background='darkblue', foreground='white', borderwidth=2)
 
@@ -395,6 +496,7 @@ planes_mejoramiento = plan_mejoramiento_controller.get_planes()
 
 CmbPlanMejoramiento = ttk.Combobox(root, values= [plan_mejoramiento[1] for plan_mejoramiento in planes_mejoramiento], textvariable=opcion_seleccionada_plan)
 diccionarioPlanesMejoramiento = {plan_mejoramiento[1]: plan_mejoramiento[0] for plan_mejoramiento in  planes_mejoramiento}
+CmbPlanMejoramiento.bind("<<ComboboxSelected>>", cambio_plan_mejoramiento)
 
 
 
@@ -418,7 +520,8 @@ btnCalificar = tk.Button(text="Calificar", command=calificar_actividad_bd)
 btnRegistrar = tk.Button(text="Registrar", command=registrar_resultado_bd)
 btnConsultarResultado = tk.Button(text="Consultar", command=consultar_resultado_Actividades_bd)
 btnAgregarPlanMejoramiento = tk.Button(text="Agregar", command=agregar_plan_bd)
-btnConsultarPlan = tk.Button(text="Consultar", command=consultar_plan)
+btnCalificarPlan = tk.Button(text="Calificar", command=calificar_plan_bd)
+btnRetroalimentacion = tk.Button(text="Agregar Retroalimentacion", command=agregar_retroalimentacion_bd)
 
 
 funcionesAprendiz = tk.Menu(menu)
@@ -447,7 +550,9 @@ funcionesActividades.add_command(label="Consultar Actividades", command=consulta
 
 funcionesPlanMejoramiento = tk.Menu(menu)
 menu.add_cascade(label="Planes de Mejoramiento", menu=funcionesPlanMejoramiento)
-funcionesPlanMejoramiento.add_command(label="Consultar Planes de Mejoramiento", command=consultar_planes)
+funcionesPlanMejoramiento.add_command(label="Calificar Plan de Mejoramiento", command=calificar_plan)
+funcionesPlanMejoramiento.add_command(label="Consultar Alumnos con planes de mejoramiento", command=consultar_alumnos_planes)
+
 
 
 

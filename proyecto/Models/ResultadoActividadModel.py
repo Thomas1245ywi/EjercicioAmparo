@@ -39,6 +39,10 @@ class ResultadoActividadModel:
         return self.cursor.fetchall()
     
 
+   
+    
+    
+
 
     def obtener_resultado_por_actividad(self, id_actividad):
 

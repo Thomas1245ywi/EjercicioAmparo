@@ -18,5 +18,8 @@ class ResultadoController:
     def cerrar_conexion(self):
         self.resultado_model.cerrar_conexion()
 
+    def cambiar_estado(self,id_resultado, id_estado):
+        self.resultado_model.cambiar_estado(id_resultado, id_estado)
+
     
     
