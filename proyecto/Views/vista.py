@@ -42,13 +42,24 @@ resultado_final = None
 id_plan = None
 retroalimentacioncita =  None
 contador = None
+from tkinter import messagebox
 
 
+def limpiar_campos():
+    entNombre.delete(0, tk.END)
+    entEdad.delete(0, tk.END)
+    entResultado.delete(0, tk.END)
+    entNota.delete(0, tk.END)
+    entPlan.delete(0, tk.END)
+    entDescipcion.delete(0, tk.END)
+    entRetroalimetacion.delete(0, tk.END)
 
-
+def mostrar_mensaje():
+    messagebox.showinfo("Accion Exitosa", "Accion Realizada con exito")
+    limpiar_campos()
 
 def cambio_plan_mejoramiento(event):
-    global retroalimentacioncita
+    global retroalimentacioncita,contador
     
     if contador == 2:
         ocultar_todo()
@@ -57,10 +68,11 @@ def cambio_plan_mejoramiento(event):
 def agregar_retroalimentacion_bd():
     plan_mejoramiento_controller.agregar_retroalimentacion(retroalimentacion.get(),fecha_seleccionada,id_plan)
     print("oki")
+    mostrar_mensaje()
 
 def calificar_plan_bd():
     modificar_cmb_Planes()
-    global id_plan
+    global id_plan,contador
     id_plan,id_resultado,contador = plan_mejoramiento_controller.calificar_plan(nota.get(),diccionarioPlanesMejoramiento[opcion_seleccionada_plan.get()])
     if id_plan != None:
         ocultar_todo()
@@ -75,7 +87,6 @@ def calificar_plan_bd():
             lblFechaEntrega.grid()
             datEntrega.grid()
             btnRetroalimentacion.grid()
-            contador+=1
 
         else:
             estado = "Desaprobado"
@@ -88,7 +99,7 @@ def calificar_plan_bd():
             estado_aprendiz_id = estado_aprendiz_controller.get_estado_por_nombre(estado_aprendiz)
 
             aprendiz_controller.cambiar_estado(estado_aprendiz_id,aprendiz_id)
-            contador+=1
+            contador = 2
             
 
 
@@ -98,6 +109,7 @@ def calificar_plan_bd():
 
             ocultar_todo()
             lblAviso.grid()
+
 
 
 
@@ -171,7 +183,7 @@ def modificar_cmb_Competencias():
 def agregar_aprendiz_bd():
 
     aprendiz_controller.set_aprendiz(nombre.get(),edad.get(), diccionarioFichas[opcion_seleccionada.get()], diccionarioResultados[opcion_seleccionada_resultado.get()])
-
+    mostrar_mensaje()
 
 def ocultar_todo():
    
@@ -182,7 +194,7 @@ def calificar_actividad_bd():
     modificar_cmb_Actividades()
     global actividades_arreglo, resultado_final
     actividades_arreglo = actividad_controller.calificar_actividad(diccionarioActividades[opcion_seleccionada_actividad.get()],nota.get())
-
+    mostrar_mensaje()
     if actividades_arreglo != None:
         ocultar_todo()
         resultado = []
@@ -205,6 +217,11 @@ def calificar_actividad_bd():
 
         btnAgregarPlanMejoramiento.grid(row=3, column=0, columnspan=2, padx=10, pady=10) 
 
+    else:
+        ocultar_todo()
+        lblMensajeExito.grid()
+
+
 
 
 
@@ -216,9 +233,8 @@ def calificar_actividad_bd():
 def agregar_actividad_bd():
     actividad_controller.set_actividad(nombre.get())
     modificar_cmb_Actividades()
-    resultado_actividad_controller.agregar_relacion_resultado_actividad(diccionarioResultados[opcion_seleccionada_resultado.get()],    diccionarioActividades[nombre.get()]
-)
-
+    resultado_actividad_controller.agregar_relacion_resultado_actividad(diccionarioResultados[opcion_seleccionada_resultado.get()],    diccionarioActividades[nombre.get()])
+    mostrar_mensaje()
     
 def agregar_actividad():
     modificar_cmb_Resultados()
@@ -235,10 +251,12 @@ def consultar_actividades():
                       
 def agregar_plan_bd():
     fecha_hoy = datetime.date.today()
+    
    
 
     print(resultado_final)
     plan_mejoramiento_controller.set_plan(plan.get(),fecha_hoy,fecha_seleccionada,descripcion.get(),resultado_final[0])
+    mostrar_mensaje()
 
     
     
@@ -323,6 +341,7 @@ def consultar_estudiantes():
         resultado_label.grid(row=i, column=4)
 
 def consultar_alumnos_planes():
+    ocultar_todo()
     aprendicez_competencia = aprendiz_controller.get_aprendicez_por_plan()
 
     encabezados = ['Aprendiz','Competencia']
@@ -392,6 +411,7 @@ def agregar_resultado():
 
 def registrar_resultado_bd():
     resultado_controller.set_resultado(resultado.get(),diccionarioCompetencias[opcion_seleccionada_competencia.get()])
+    mostrar_mensaje()
 
 def consultar_resultado_Actividades_bd():
     # Obtener actividades asociadas al resultado seleccionado
@@ -441,7 +461,7 @@ lblFechaEntrega = tk.Label(text="Fecha Entrega: ")
 lblDescripcion = tk.Label(text="Descripcion: ")
 lblRetroalimentacion = tk.Label(text="Retroalimentacion: ")
 lblAviso = tk.Label(text="El Aprendiz No aprobo ninguno de los planes de mejoramiento por ende sera  citado a comite  ")
-
+lblMensajeExito = tk.Label(text="El Resultado a sido aprobado")
 
 
 
